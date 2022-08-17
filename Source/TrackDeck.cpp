@@ -75,6 +75,7 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
     volumeSlider.addListener(this);
     speedSlider.addListener(this);
     positionSlider.addListener(this);
+    reverbSlider.addListener(this);
 
 
     volumeSlider.setRange(0.0, 1.0);
@@ -197,6 +198,9 @@ void TrackDeck::sliderValueChanged(Slider *slider) {
         player->setPositionRelative(slider->getValue());
     }
 
+    if (slider == &reverbSlider) {
+        player->setReverb(slider->getValue());
+    }
 }
 
 bool TrackDeck::isInterestedInFileDrag(const StringArray &files) {

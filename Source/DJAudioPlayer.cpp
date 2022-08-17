@@ -22,16 +22,18 @@ DJAudioPlayer::~DJAudioPlayer() {
 void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     resampleSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    reverbAudioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void DJAudioPlayer::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill) {
     resampleSource.getNextAudioBlock(bufferToFill);
-
+    reverbAudioSource.getNextAudioBlock(bufferToFill);
 }
 
 void DJAudioPlayer::releaseResources() {
     transportSource.releaseResources();
     resampleSource.releaseResources();
+    reverbAudioSource.releaseResources();
 }
 
 void DJAudioPlayer::loadURL(URL audioURL) {
@@ -73,6 +75,12 @@ void DJAudioPlayer::setPositionRelative(double pos) {
         double posInSecs = transportSource.getLengthInSeconds() * pos;
         setPosition(posInSecs);
     }
+}
+
+void DJAudioPlayer::setReverb(double reverb) {
+    Reverb::Parameters parameters = reverbAudioSource.getParameters();
+    parameters.roomSize = reverb;
+    reverbAudioSource.setParameters(parameters);
 }
 
 
