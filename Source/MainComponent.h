@@ -10,11 +10,12 @@
 
 
 #include "DJAudioPlayer.h"
-#include "DeckGUI.h"
+#include "TrackDeck.h"
 
 #include <JuceHeader.h>
 
-#include "PlaylistComponent.h"
+#include "Library/Library.h"
+#include "Headers.h"
 
 //==============================================================================
 /*
@@ -28,32 +29,34 @@ public:
     MainComponent();
     ~MainComponent();
 
-    //==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
 
-    //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
 
 private:
-    //==============================================================================
-    // Your private member variables go here...
-
+    //audio utils
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbCache{100};
-
-    DJAudioPlayer player1{formatManager};
-    DeckGUI deckGUI1{&player1, formatManager, thumbCache}; 
-
-    DJAudioPlayer player2{formatManager};
-    DeckGUI deckGUI2{&player2, formatManager, thumbCache};
-
     MixerAudioSource mixerSource;
 
-    PlaylistComponent playlistComponent;
-    
-    
+    //audio players
+    DJAudioPlayer player1{formatManager};
+    DJAudioPlayer player2{formatManager};
+
+    //visual components
+    Headers headers;
+    TrackDeck trackDeck1{&player1, formatManager, thumbCache};
+    TrackDeck trackDeck2{&player2, formatManager, thumbCache};
+    Library library{
+        formatManager,
+        [this] (const TrackInfo& trackInfo)
+        { trackDeck1.loadFile(trackInfo.filePath); },
+        [this] (const TrackInfo& trackInfo)
+        { trackDeck2.loadFile(trackInfo.filePath); }
+    };
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

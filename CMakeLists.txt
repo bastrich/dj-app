@@ -11,11 +11,15 @@ juce_generate_juce_header(Otodecks)
 
 target_sources(Otodecks
     PRIVATE
-        Source/DeckGUI.cpp
+        Source/TrackDeck.cpp
         Source/DJAudioPlayer.cpp
         Source/WaveformDisplay.cpp
-        Source/PlaylistComponent.cpp
+        Source/Library/Library.cpp
         Source/Main.cpp
+        Source/Headers.cpp
+        Source/Library/TrackInfo.cpp
+        Source/Library/TrackStorage.cpp
+        Source/Library/TrackActions.cpp
         Source/MainComponent.cpp)
 
 target_compile_definitions(Otodecks
