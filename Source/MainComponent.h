@@ -36,6 +36,9 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
 
+    void alphaChanged() override {
+
+    }
 private:
     //audio utils
     AudioFormatManager formatManager;
@@ -47,6 +50,8 @@ private:
     DJAudioPlayer player2{formatManager};
 
     //visual components
+    Image backgroundImage = ImageCache::getFromMemory(BinaryData::background_jpg, BinaryData::background_jpgSize);
+//    Image playButtonImage = ImageFileFormat::loadFrom(File("/Users/bastrich/dev/study/otodecks/Source/play.png"));
     Headers headers;
     TrackDeck trackDeck1{&player1, formatManager, thumbCache};
     TrackDeck trackDeck2{&player2, formatManager, thumbCache};

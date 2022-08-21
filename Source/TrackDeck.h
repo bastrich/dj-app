@@ -57,7 +57,7 @@ private:
     FileChooser fChooser{"Select a file..."};
     DJAudioPlayer *player;
 
-    Label trackLabel{"trackLabel", "Please load a track first"};
+    Label trackLabel{"trackLabel"};
     WaveformDisplay waveformDisplay;
     ImageButton playButton{"Play"};
     ImageButton stopButton{"Stop"};

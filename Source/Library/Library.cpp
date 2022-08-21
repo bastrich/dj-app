@@ -19,6 +19,10 @@ Library::Library(
     tableComponent.setModel(this);
 
     addTrackButton.addListener(this);
+
+    tableComponent.setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
+    tableComponent.setColour(ListBox::ColourIds::outlineColourId, Colours::transparentWhite);
+//    tableComponent.setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
 }
 
 Library::~Library() {
@@ -26,10 +30,10 @@ Library::~Library() {
 }
 
 void Library::paint(Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
+//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
 
-    g.setColour(Colours::grey);
-    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
+//    g.setColour(Colours::grey);
+//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
     g.setColour(Colours::white);
     g.setFont(14.0f);
@@ -68,7 +72,7 @@ void Library::paintRowBackground(Graphics &g,
     if (rowIsSelected) {
         g.fillAll(Colours::orange);
     } else {
-        g.fillAll(Colours::darkgrey);
+        g.fillAll(Colours::transparentWhite);
     }
 }
 

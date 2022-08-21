@@ -20,6 +20,7 @@ target_sources(Otodecks
         Source/Library/TrackInfo.cpp
         Source/Library/TrackStorage.cpp
         Source/Library/TrackActions.cpp
+        Source/Utils.h
         Source/MainComponent.cpp)
 
 target_compile_definitions(Otodecks
@@ -27,8 +28,20 @@ target_compile_definitions(Otodecks
         JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:Otodecks,JUCE_PRODUCT_NAME>"
         JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:Otodecks,JUCE_VERSION>")
 
+juce_add_binary_data(BinaryData
+    SOURCES
+        Resources/Images/background.jpg
+        Resources/Images/play.png
+        Resources/Images/stop.png
+        Resources/Images/load.png
+        Resources/Images/close.png
+        Resources/Images/minimize.png
+        Resources/Images/maximize.png
+        Resources/Fonts/StoryElement.ttf)
+
 target_link_libraries(Otodecks
     PRIVATE
+        BinaryData
         juce::juce_gui_extra
         juce::juce_audio_utils
     PUBLIC

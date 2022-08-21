@@ -1,5 +1,6 @@
 #include "TrackDeck.h"
 #include "Library/TrackInfo.h"
+#include "Utils.h"
 
 //==============================================================================
 TrackDeck::TrackDeck(DJAudioPlayer *_player,
@@ -10,52 +11,17 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
 
     addAndMakeVisible(trackLabel);
 
-    Image playButtonImage = ImageFileFormat::loadFrom(File("/Users/bastrich/dev/study/otodecks/Source/play.png"));
-    playButton.setImages(
-            true,
-            true,
-            true,
-            playButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            playButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            playButtonImage,
-            0.5,
-            Colours::transparentWhite
+    Utils::setupImageButton(
+            playButton,
+            ImageCache::getFromMemory(BinaryData::play_png, BinaryData::play_pngSize)
     );
-
-    Image stopButtonImage = ImageFileFormat::loadFrom(File("/Users/bastrich/dev/study/otodecks/Source/stop.png"));
-    stopButton.setImages(
-            true,
-            true,
-            true,
-            stopButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            stopButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            stopButtonImage,
-            0.5,
-            Colours::transparentWhite
+    Utils::setupImageButton(
+            stopButton,
+            ImageCache::getFromMemory(BinaryData::stop_png, BinaryData::stop_pngSize)
     );
-
-    Image loadButtonImage = ImageFileFormat::loadFrom(File("/Users/bastrich/dev/study/otodecks/Source/load.png"));
-    loadButton.setImages(
-            true,
-            true,
-            true,
-            loadButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            loadButtonImage,
-            0.5,
-            Colours::transparentWhite,
-            loadButtonImage,
-            0.5,
-            Colours::transparentWhite
+    Utils::setupImageButton(
+            loadButton,
+            ImageCache::getFromMemory(BinaryData::load_png, BinaryData::load_pngSize)
     );
 
     addAndMakeVisible(waveformDisplay);
@@ -85,6 +51,7 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
 
     reverbSlider.setSliderStyle(Slider::Rotary);
     reverbSlider.setLookAndFeel(this);
+    reverbSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
 
     startTimer(500);
 }
@@ -94,10 +61,10 @@ TrackDeck::~TrackDeck() {
 }
 
 void TrackDeck::paint(Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
+//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
 
-    g.setColour(Colours::grey);
-    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
+//    g.setColour(Colours::grey);
+//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
     g.setColour(Colours::white);
     g.setFont(14.0f);
@@ -146,9 +113,12 @@ void TrackDeck::resized() {
     playButton.setBounds(getWidth() * 2 / 5, 0, getHeight() / 5, getHeight() / 5);
     stopButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5, 0, getHeight() / 5, getHeight() / 5);
     loadButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 * 2, 0, getHeight() / 5, getHeight() / 5);
-    positionSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5, getWidth() * 3 / 10, getHeight() * 4 / 15);
-    volumeSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15, getWidth() * 3 / 10, getHeight() * 4 / 15);
-    speedSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15 * 2, getWidth() * 3 / 10, getHeight() * 4 / 15);
+    positionSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5, getWidth() * 3 / 10,
+                             getHeight() * 4 / 15);
+    volumeSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15,
+                           getWidth() * 3 / 10, getHeight() * 4 / 15);
+    speedSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15 * 2,
+                          getWidth() * 3 / 10, getHeight() * 4 / 15);
     reverbSlider.setBounds(getWidth() * 4 / 5, getHeight() / 5, getWidth() * 1 / 5, getHeight() * 4 / 5);
 }
 
@@ -229,34 +199,66 @@ void TrackDeck::timerCallback() {
             player->getPositionRelative());
 }
 
-//https://docs.juce.com/master/tutorial_look_and_feel_customisation.html
+
 void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPos,
                                  const float rotaryStartAngle, const float rotaryEndAngle, Slider &) {
-    auto radius = (float) juce::jmin (width / 2, height / 2) - 4.0f;
-    auto centreX = (float) x + (float) width  * 0.5f;
+
+
+    auto radius = (float) juce::jmin(width / 2, height / 2) - 20.0f;
+    auto centreX = (float) x + (float) width * 0.5f;
     auto centreY = (float) y + (float) height * 0.5f;
     auto rx = centreX - radius;
     auto ry = centreY - radius;
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
+    g.setColour(juce::Colours::orchid);
+    g.setFont(16.0f);
+    g.drawText("0.00", centreX + radius * cos(rotaryStartAngle), centreY + radius * sin(rotaryStartAngle), 30, 16, Justification::bottomLeft);
+    g.drawText("0.25", rx, ry, 30, 16, Justification::topLeft);
+    g.drawText("0.00", rx, ry, 30, 16, Justification::centredTop);
+    g.drawText("0.75", rx, ry, 30, 16, Justification::topRight);
+    g.drawText("1.00", rx, ry, 30, 16, Justification::bottomRight);
+
+
     // fill
-    g.setColour (juce::Colours::orange);
-    g.fillEllipse (rx, ry, rw, rw);
+//    g.setColour(juce::Colours::orange);
+//    g.setGradientFill(ColourGradient::horizontal(Colours::lavender, rx, Colours::mediumslateblue, rx+rw));
+//    g.setGradientFill(ColourGradient::vertical(Colours::lavender, ry, Colours::mediumslateblue, ry+rw));
+
+    g.addTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
+//    g.setGradientFill(ColourGradient(
+//            Colours::lavender, centreX + radius * cos(angle), centreY + radius * sin(angle),
+//            Colours::mediumslateblue, centreX + radius * cos(angle), centreY + radius * sin(angle),
+//            true
+//    ));
+    g.setGradientFill(ColourGradient(
+            Colours::lavender, rx, ry,
+            Colours::mediumslateblue, centreX + rw, centreY + rw,
+            true
+    ));
+//    g.addTransform(AffineTransform::translation(centreX/2, centreY/2));
+    g.fillEllipse(-radius, -radius, rw, rw);
+
+
+//    g.addTransform(juce::AffineTransform::translation(-centreX, -centreY));
+
+//    g.addTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
 
     // outline
-    g.setColour (juce::Colours::red);
-    g.drawEllipse (rx, ry, rw, rw, 1.0f);
+//    g.setColour(juce::Colours::red);
+//    g.drawEllipse(rx, ry, rw, rw, 1.0f);
 
-    juce::Path p;
-    auto pointerLength = radius * 0.33f;
-    auto pointerThickness = 2.0f;
-    p.addRectangle (-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
-    p.applyTransform (juce::AffineTransform::rotation (angle).translated (centreX, centreY));
+//    juce::Path p;
+    auto pointerLength = radius * 0.7f;
+    auto pointerThickness = 10.0f;
+    g.setColour(juce::Colours::darkcyan);
+    g.fillRoundedRectangle(-pointerThickness * 0.2f, -0.7f * radius, pointerThickness, pointerLength, 5);
+//    p.applyTransform(juce::AffineTransform::translation(centreX, centreY));
 
     // pointer
-    g.setColour (juce::Colours::yellow);
-    g.fillPath (p);
+//    g.setColour(juce::Colours::darkcyan);
+//    g.fillPath(p);
 }
 
 

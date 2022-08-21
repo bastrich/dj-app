@@ -9,6 +9,8 @@ MainComponent::MainComponent() {
         setAudioChannels(0, 2);
     }
 
+
+
     addAndMakeVisible(headers);
     addAndMakeVisible(trackDeck1);
     addAndMakeVisible(trackDeck2);
@@ -16,9 +18,11 @@ MainComponent::MainComponent() {
 
     setSize(1200, 800);
 
+
     if (formatManager.getNumKnownFormats() == 0) {
         formatManager.registerBasicFormats();
     }
+
 
 
 }
@@ -54,10 +58,28 @@ void MainComponent::releaseResources() {
 
 //==============================================================================
 void MainComponent::paint(Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+//    setAlpha(1);
+//    setOpaque(true);
+
+//    g.fillAll(Colour{0x00ffffff});
+
+    Path path{};
+    path.addRoundedRectangle(0, 0, getWidth(), getHeight(), 20);
+    g.reduceClipRegion(path);
+
+    g.drawImage(backgroundImage, getLocalBounds().toFloat());
+
+
+
+
+//    g.fillAll(Colours::red);
 }
 
 void MainComponent::resized() {
+
+
+
+
     headers.setBounds(0, 0, getWidth(), getHeight() / 10);
     trackDeck1.setBounds(0, getHeight() / 10, getWidth(), getHeight() * 1 / 4);
     trackDeck2.setBounds(0, getHeight() * 7 / 20, getWidth(), getHeight() * 1 / 4);
