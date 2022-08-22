@@ -13,16 +13,53 @@ Library::Library(
     addAndMakeVisible(searchTrackTextEditor);
     addAndMakeVisible(tableComponent);
 
-    tableComponent.getHeader().addColumn("Track Title", 1, 1);
-    tableComponent.getHeader().addColumn("Duration", 2, 1);
-    tableComponent.getHeader().addColumn("Actions", 3, 1);
+    tableComponent.getHeader().addColumn(
+            "Track Title",
+            1,
+            1,
+            200,
+            1000,
+            TableHeaderComponent::ColumnPropertyFlags::notSortable,
+            -1
+    );
+    tableComponent.getHeader().addColumn(
+            "Duration",
+            2,
+            1,
+            80,
+            1000,
+            TableHeaderComponent::ColumnPropertyFlags::notSortable,
+            -1
+    );
+    tableComponent.getHeader().addColumn(
+            "Actions",
+            3,
+            1,
+            200,
+            1000,
+            TableHeaderComponent::ColumnPropertyFlags::notSortable,
+            -1
+    );
     tableComponent.setModel(this);
 
     addTrackButton.addListener(this);
 
     tableComponent.setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
     tableComponent.setColour(ListBox::ColourIds::outlineColourId, Colours::transparentWhite);
-//    tableComponent.setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
+
+    addTrackButton.setColour(TextButton::ColourIds::buttonColourId, Colours::darkorchid);
+    addTrackButton.setColour(TextButton::ColourIds::buttonOnColourId, Colours::orchid);
+    addTrackButton.setColour(TextButton::ColourIds::textColourOffId, Colours::aliceblue);
+    addTrackButton.setColour(TextButton::ColourIds::textColourOnId, Colours::aliceblue);
+
+    searchTrackTextEditor.setColour(TextEditor::ColourIds::backgroundColourId, Colours::lavender);
+    searchTrackTextEditor.setColour(TextEditor::ColourIds::textColourId, Colours::orchid);
+    searchTrackTextEditor.setColour(TextEditor::ColourIds::outlineColourId, Colours::transparentWhite);
+    searchTrackTextEditor.setColour(TextEditor::ColourIds::focusedOutlineColourId, Colours::thistle);
+
+    searchTrackTextEditor.setTextToShowWhenEmpty("Search track...", Colours::orchid);
+
+    searchTrackTextEditor.setJustification(Justification::centredLeft);
 }
 
 Library::~Library() {
@@ -35,8 +72,8 @@ void Library::paint(Graphics &g) {
 //    g.setColour(Colours::grey);
 //    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour(Colours::white);
-    g.setFont(14.0f);
+    g.setColour(Colours::orchid);
+    g.setFont(20.0f);
 
     g.drawText(
             "Music Library",
@@ -50,13 +87,14 @@ void Library::paint(Graphics &g) {
 }
 
 void Library::resized() {
-    addTrackButton.setBounds(getWidth() / 5, 0, getWidth() / 5, getHeight() / 10);
-    searchTrackTextEditor.setBounds(getWidth() * 2 / 5, 0, getWidth() / 5, getHeight() / 10);
-    tableComponent.setBounds(0, getHeight() / 10, getWidth(), getHeight() * 9 / 10);
+    addTrackButton.setBounds(getWidth() / 5, 0, getWidth() / 10, getHeight() / 10);
+    searchTrackTextEditor.setBounds(getWidth() * 7 / 20, 0, getWidth() / 5, getHeight() / 10);
+
+    tableComponent.setBounds(0, getHeight() / 10 + 10, getWidth(), getHeight() * 9 / 10);
 
     tableComponent.getHeader().setColumnWidth(1, getWidth() * 6 / 10);
     tableComponent.getHeader().setColumnWidth(2, getWidth() / 10);
-    tableComponent.getHeader().setColumnWidth(3, getWidth() * 3/10);
+    tableComponent.getHeader().setColumnWidth(3, getWidth() * 3 / 10);
 }
 
 int Library::getNumRows() {
@@ -70,7 +108,7 @@ void Library::paintRowBackground(Graphics &g,
                                  bool rowIsSelected) {
 // just highlight selected rows
     if (rowIsSelected) {
-        g.fillAll(Colours::orange);
+        g.fillAll(Colour{0x9fff1493});
     } else {
         g.fillAll(Colours::transparentWhite);
     }
@@ -119,13 +157,13 @@ Component *Library::refreshComponentForCell(
 
 //            std::unique_ptr<TrackActions> trackActions{trackInfo, &loadOnDeck1Impl, &loadOnDeck2Impl, &Library::deleteTrack};
 
-            TrackActions* trackActions = new TrackActions{
+            TrackActions *trackActions = new TrackActions{
                     trackStorage.getTracks()[rowNumber],
-                playOnDeck1Impl,
-                playOnDeck2Impl,
-                [this] (const TrackInfo& trackInfo)
-                    { trackStorage.deleteTrack(trackInfo.filePath); }
+                    playOnDeck1Impl,
+                    playOnDeck2Impl,
+                    [this](const TrackInfo &trackInfo) { trackStorage.deleteTrack(trackInfo.filePath); }
             };
+
 
             existingComponentToUpdate = trackActions;
         }
@@ -142,6 +180,6 @@ void Library::buttonClicked(Button *button) {
     }
 }
 
-void Library::textEditorTextChanged(TextEditor& textEditor) {
+void Library::textEditorTextChanged(TextEditor &textEditor) {
     int a = 5;
 }

@@ -53,6 +53,10 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
     speedSlider.setNumDecimalPlacesToDisplay(3);
     positionSlider.setNumDecimalPlacesToDisplay(3);
 
+    volumeSlider.setColour(Slider::ColourIds::textBoxTextColourId, Colours::orchid);
+    speedSlider.setColour(Slider::ColourIds::textBoxTextColourId, Colours::orchid);
+    positionSlider.setColour(Slider::ColourIds::textBoxTextColourId, Colours::orchid);
+
     reverbSlider.setSliderStyle(Slider::Rotary);
     reverbSlider.setLookAndFeel(this);
     reverbSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -70,7 +74,7 @@ void TrackDeck::paint(Graphics &g) {
 //    g.setColour(Colours::grey);
 //    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour(Colours::white);
+    g.setColour(Colours::darkorchid);
     g.setFont(14.0f);
 
     g.drawText(
@@ -185,6 +189,7 @@ bool TrackDeck::isInterestedInFileDrag(const StringArray &files) {
 void TrackDeck::loadFile(string filePath) {
     File file{filePath};
     URL url{file};
+    trackLabel.setColour(Label::ColourIds::textColourId, Colours::darkorchid);
     trackLabel.setText(file.getFileName(), NotificationType::dontSendNotification);
     player->loadURL(url);
     waveformDisplay.loadURL(url);

@@ -18,6 +18,21 @@ TrackActions::TrackActions(
     loadOnDeck1Button.addListener(this);
     loadOnDeck2Button.addListener(this);
     deleteButton.addListener(this);
+
+    loadOnDeck1Button.setColour(TextButton::ColourIds::buttonColourId, Colours::darkorchid);
+    loadOnDeck1Button.setColour(TextButton::ColourIds::buttonOnColourId, Colours::orchid);
+    loadOnDeck1Button.setColour(TextButton::ColourIds::textColourOffId, Colours::aliceblue);
+    loadOnDeck1Button.setColour(TextButton::ColourIds::textColourOnId, Colours::aliceblue);
+
+    loadOnDeck2Button.setColour(TextButton::ColourIds::buttonColourId, Colours::darkorchid);
+    loadOnDeck2Button.setColour(TextButton::ColourIds::buttonOnColourId, Colours::orchid);
+    loadOnDeck2Button.setColour(TextButton::ColourIds::textColourOffId, Colours::aliceblue);
+    loadOnDeck2Button.setColour(TextButton::ColourIds::textColourOnId, Colours::aliceblue);
+
+    deleteButton.setColour(TextButton::ColourIds::buttonColourId, Colours::crimson);
+    deleteButton.setColour(TextButton::ColourIds::buttonOnColourId, Colours::red);
+    deleteButton.setColour(TextButton::ColourIds::textColourOffId, Colours::aliceblue);
+    deleteButton.setColour(TextButton::ColourIds::textColourOnId, Colours::aliceblue);
 }
 
 TrackActions::~TrackActions() {
@@ -25,16 +40,16 @@ TrackActions::~TrackActions() {
 }
 
 void TrackActions::paint(Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
+//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
 
 //    g.setColour(Colours::grey);
 //    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 }
 
 void TrackActions::resized() {
-    loadOnDeck1Button.setBounds(0, 0, getWidth() / 3, getHeight());
-    loadOnDeck2Button.setBounds(getWidth() / 3, 0, getWidth() / 3, getHeight());
-    deleteButton.setBounds(getWidth() * 2 / 3, 0, getWidth() / 3, getHeight());
+    loadOnDeck1Button.setBounds(getWidth() / 20, 0, getWidth() / 4, getHeight());
+    loadOnDeck2Button.setBounds(getWidth() / 4 + 2 * getWidth() / 20, 0, getWidth() / 4, getHeight());
+    deleteButton.setBounds(2 * getWidth() / 4 + 3 * getWidth() / 20, 0, getWidth() / 4, getHeight());
 }
 
 void TrackActions::buttonClicked(Button *button) {

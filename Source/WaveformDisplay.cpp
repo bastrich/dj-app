@@ -26,7 +26,7 @@ void WaveformDisplay::paint(Graphics &g) {
 
 //    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
-    g.setColour (Colours::grey);
+    g.setColour (Colours::hotpink);
 //    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
 
@@ -39,8 +39,8 @@ void WaveformDisplay::paint(Graphics &g) {
                                0,
                                1.0f
         );
-        g.setColour(Colours::lightgreen);
-        g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
+        g.setColour(Colour{ 0xaf90ee90 });
+        g.fillRect(position * getWidth(), 0, 3, getHeight());
     } else {
         g.setColour(Colours::firebrick);
         g.setFont(16.0f);
