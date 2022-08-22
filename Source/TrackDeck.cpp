@@ -45,7 +45,7 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
 
 
     volumeSlider.setRange(0.0, 1.0);
-    speedSlider.setRange(0.0, 100.0);
+    speedSlider.setRange(0.1, 3.0);
     positionSlider.setRange(0.0, 1.0);
     reverbSlider.setRange(0.0, 1.0);
 
@@ -189,10 +189,17 @@ bool TrackDeck::isInterestedInFileDrag(const StringArray &files) {
 void TrackDeck::loadFile(string filePath) {
     File file{filePath};
     URL url{file};
+
     trackLabel.setColour(Label::ColourIds::textColourId, Colours::darkorchid);
     trackLabel.setText(file.getFileName(), NotificationType::dontSendNotification);
+
     player->loadURL(url);
     waveformDisplay.loadURL(url);
+
+    speedSlider.setValue(1);
+    volumeSlider.setValue(0.5);
+    positionSlider.setValue(0);
+    reverbSlider.setValue(0);
 }
 
 void TrackDeck::filesDropped(const StringArray &files, int x, int y) {
@@ -203,9 +210,11 @@ void TrackDeck::filesDropped(const StringArray &files, int x, int y) {
 }
 
 void TrackDeck::timerCallback() {
-    //std::cout << "TrackDeck::timerCallback" << std::endl;
-    waveformDisplay.setPositionRelative(
-            player->getPositionRelative());
+    double relativePosition = player->getPositionRelative();
+    if (!isnan(relativePosition)) {
+        positionSlider.setValue(relativePosition, NotificationType::dontSendNotification);
+        waveformDisplay.setPositionRelative(relativePosition);
+    }
 }
 
 

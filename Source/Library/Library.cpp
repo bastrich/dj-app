@@ -142,7 +142,7 @@ void Library::paintCell(Graphics &g,
     if (columnId == 2) {
         Time time{trackInfo.durationSeconds * 1000};
         g.drawText(
-                std::to_string(time.getMinutes()) + "min " + std::to_string(time.getSeconds()) + "sec",
+                std::to_string(time.getMinutes()) + " min " + std::to_string(time.getSeconds()) + " sec",
                 2,
                 0,
                 width - 4,

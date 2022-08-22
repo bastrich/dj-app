@@ -50,7 +50,9 @@ private:
     std::unique_ptr<AudioFormatReaderSource> readerSource;
     AudioTransportSource transportSource;
     ResamplingAudioSource resampleSource{&transportSource, false, 2};
-    ReverbAudioSource reverbAudioSource{&transportSource, false};
+    ReverbAudioSource reverbAudioSource{&resampleSource, false};
+
+
 };
 
 

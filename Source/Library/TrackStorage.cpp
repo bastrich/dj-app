@@ -39,7 +39,7 @@ void TrackStorage::addTrack(File& file) {
 
 void TrackStorage::deleteTrack(string trackFilePath) {
     vector<TrackInfo>::iterator trackInfo = find_if(tracks.begin(), tracks.end(), [&trackFilePath](const TrackInfo &trackInfo) {
-        return trackInfo.filePath == trackFilePath;
+        return trackInfo.filePath.compare(trackFilePath) == 0;
     });
 
     if (trackInfo != tracks.end()) {
