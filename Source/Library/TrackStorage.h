@@ -14,7 +14,7 @@ public:
 
     void deleteTrack(string trackFilePath);
 
-    vector<TrackInfo> getTracks();
+    vector<TrackInfo> getTracks(const string& nameFilter);
 
 private:
     AudioFormatManager &formatManager;

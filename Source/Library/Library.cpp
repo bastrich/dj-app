@@ -44,6 +44,8 @@ Library::Library(
 
     addTrackButton.addListener(this);
 
+    searchTrackTextEditor.addListener(this);
+
     tableComponent.setColour(ListBox::ColourIds::backgroundColourId, Colours::transparentWhite);
     tableComponent.setColour(ListBox::ColourIds::outlineColourId, Colours::transparentWhite);
 
@@ -98,7 +100,7 @@ void Library::resized() {
 }
 
 int Library::getNumRows() {
-    return trackStorage.getTracks().size();
+    return trackStorage.getTracks(searchTrackTextEditor.getText().toStdString()).size();
 }
 
 void Library::paintRowBackground(Graphics &g,
@@ -120,7 +122,11 @@ void Library::paintCell(Graphics &g,
                         int width,
                         int height,
                         bool rowIsSelected) {
-    TrackInfo trackInfo = trackStorage.getTracks()[rowNumber];
+    vector<TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
+    if (rowNumber >= tracks.size()) {
+        return;
+    }
+    TrackInfo trackInfo = tracks[rowNumber];
 
     if (columnId == 1) {
         g.drawText(
@@ -134,8 +140,9 @@ void Library::paintCell(Graphics &g,
         );
     }
     if (columnId == 2) {
+        Time time{trackInfo.durationSeconds * 1000};
         g.drawText(
-                std::to_string(trackInfo.durationSeconds), // the important bit
+                std::to_string(time.getMinutes()) + "min " + std::to_string(time.getSeconds()) + "sec",
                 2,
                 0,
                 width - 4,
@@ -157,11 +164,20 @@ Component *Library::refreshComponentForCell(
 
 //            std::unique_ptr<TrackActions> trackActions{trackInfo, &loadOnDeck1Impl, &loadOnDeck2Impl, &Library::deleteTrack};
 
+            vector<TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
+            if (rowNumber >= tracks.size()) {
+                return existingComponentToUpdate;
+            }
+            TrackInfo trackInfo = tracks[rowNumber];
+
             TrackActions *trackActions = new TrackActions{
-                    trackStorage.getTracks()[rowNumber],
+                    trackInfo,
                     playOnDeck1Impl,
                     playOnDeck2Impl,
-                    [this](const TrackInfo &trackInfo) { trackStorage.deleteTrack(trackInfo.filePath); }
+                    [this](const TrackInfo &trackInfo) {
+                        trackStorage.deleteTrack(trackInfo.filePath);
+                        tableComponent.updateContent();
+                    }
             };
 
 
@@ -176,10 +192,11 @@ void Library::buttonClicked(Button *button) {
         fChooser.launchAsync(FileBrowserComponent::canSelectFiles, [this](const FileChooser &chooser) {
             File audioFile = chooser.getResult();
             trackStorage.addTrack(audioFile);
+            tableComponent.updateContent();
         });
     }
 }
 
 void Library::textEditorTextChanged(TextEditor &textEditor) {
-    int a = 5;
+    tableComponent.updateContent();
 }

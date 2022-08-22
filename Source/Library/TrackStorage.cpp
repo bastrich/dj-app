@@ -48,8 +48,18 @@ void TrackStorage::deleteTrack(string trackFilePath) {
     }
 }
 
-vector<TrackInfo> TrackStorage::getTracks() {
-    return tracks;
+vector<TrackInfo> TrackStorage::getTracks(const string& nameFilter) {
+    if (nameFilter.empty()) {
+        return tracks;
+    }
+
+    vector<TrackInfo> result;
+
+    std::copy_if (tracks.begin(), tracks.end(), std::back_inserter(result), [&nameFilter](const TrackInfo &trackInfo) {
+        return trackInfo.name.find(nameFilter) != std::string::npos;
+    });
+
+    return result;
 }
 
 void TrackStorage::readTracks() {
