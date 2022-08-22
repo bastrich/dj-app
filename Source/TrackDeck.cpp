@@ -49,6 +49,10 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
     positionSlider.setRange(0.0, 1.0);
     reverbSlider.setRange(0.0, 1.0);
 
+    volumeSlider.setNumDecimalPlacesToDisplay(3);
+    speedSlider.setNumDecimalPlacesToDisplay(3);
+    positionSlider.setNumDecimalPlacesToDisplay(3);
+
     reverbSlider.setSliderStyle(Slider::Rotary);
     reverbSlider.setLookAndFeel(this);
     reverbSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
@@ -111,8 +115,8 @@ void TrackDeck::resized() {
     trackLabel.setBounds(0, 0, getWidth() * 2 / 5, getHeight() / 5);
     waveformDisplay.setBounds(0, getHeight() / 5, getWidth() * 2 / 5, getHeight() * 4 / 5);
     playButton.setBounds(getWidth() * 2 / 5, 0, getHeight() / 5, getHeight() / 5);
-    stopButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5, 0, getHeight() / 5, getHeight() / 5);
-    loadButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 * 2, 0, getHeight() / 5, getHeight() / 5);
+    stopButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 + 10, 0, getHeight() / 5, getHeight() / 5);
+    loadButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 * 2 + 20, 0, getHeight() / 5, getHeight() / 5);
     positionSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5, getWidth() * 3 / 10,
                              getHeight() * 4 / 15);
     volumeSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15,
@@ -204,7 +208,10 @@ void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int heigh
                                  const float rotaryStartAngle, const float rotaryEndAngle, Slider &) {
 
 
-    auto radius = (float) juce::jmin(width / 2, height / 2) - 20.0f;
+    float markSide = 30;
+    float markAddRadius = sqrt(pow(markSide / 2, 2) + pow(markSide / 2, 2));
+
+    auto radius = (float) juce::jmin(width / 2, height / 2) - markAddRadius;
     auto centreX = (float) x + (float) width * 0.5f;
     auto centreY = (float) y + (float) height * 0.5f;
     auto rx = centreX - radius;
@@ -212,13 +219,58 @@ void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int heigh
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
+
     g.setColour(juce::Colours::orchid);
     g.setFont(16.0f);
-    g.drawText("0.00", centreX + radius * cos(rotaryStartAngle), centreY + radius * sin(rotaryStartAngle), 30, 16, Justification::bottomLeft);
-    g.drawText("0.25", rx, ry, 30, 16, Justification::topLeft);
-    g.drawText("0.00", rx, ry, 30, 16, Justification::centredTop);
-    g.drawText("0.75", rx, ry, 30, 16, Justification::topRight);
-    g.drawText("1.00", rx, ry, 30, 16, Justification::bottomRight);
+
+    float markRadius = radius + markAddRadius;
+
+    g.drawText(
+            "0.00",
+            centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2,
+            centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2,
+            markSide,
+            markSide,
+            Justification::centred
+    );
+    g.drawText(
+            "0.25",
+            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
+            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
+            markSide,
+            markSide,
+            Justification::centred
+    );
+    g.drawText(
+            "0.50",
+            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.5f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
+            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.5f * (rotaryEndAngle - rotaryStartAngle))),
+            markSide,
+            markSide,
+            Justification::centred
+    );
+    g.drawText(
+            "0.75",
+            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
+            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                       (rotaryStartAngle + 0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
+            markSide,
+            markSide,
+            Justification::centred
+    );
+    g.drawText(
+            "1.00",
+            centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2,
+            centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2,
+            markSide,
+            markSide,
+            Justification::centred
+    );
 
 
     // fill
@@ -250,10 +302,10 @@ void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int heigh
 //    g.drawEllipse(rx, ry, rw, rw, 1.0f);
 
 //    juce::Path p;
-    auto pointerLength = radius * 0.7f;
+    auto pointerLength = radius * 0.5f;
     auto pointerThickness = 10.0f;
-    g.setColour(juce::Colours::darkcyan);
-    g.fillRoundedRectangle(-pointerThickness * 0.2f, -0.7f * radius, pointerThickness, pointerLength, 5);
+    g.setColour(Colours::mediumslateblue);
+    g.fillRoundedRectangle(-pointerThickness * 0.5f, -0.85f * radius, pointerThickness, pointerLength, 5);
 //    p.applyTransform(juce::AffineTransform::translation(centreX, centreY));
 
     // pointer
