@@ -152,25 +152,29 @@ Component *Library::refreshComponentForCell(
         bool isRowSelected,
         Component *existingComponentToUpdate) {
     if (columnId == 3) {
-        if (existingComponentToUpdate == nullptr) {
+        if (existingComponentToUpdate == nullptr || deletionHappened) {
             vector<TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
             if (rowNumber >= tracks.size()) {
                 return existingComponentToUpdate;
             }
-            TrackInfo trackInfo = tracks[rowNumber];
 
+            //possible memory leak
             TrackActions *trackActions = new TrackActions{
-                    trackInfo,
+                    tracks[rowNumber],
                     playOnDeck1Impl,
                     playOnDeck2Impl,
                     [this](const TrackInfo &trackInfo) {
                         trackStorage.deleteTrack(trackInfo.filePath);
+                        deletionHappened = true;
                         tableComponent.updateContent();
                     }
             };
 
-
             existingComponentToUpdate = trackActions;
+
+            if (deletionHappened && rowNumber == tracks.size() - 1) {
+                deletionHappened = false;
+            }
         }
     }
     return existingComponentToUpdate;
