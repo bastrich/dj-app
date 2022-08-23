@@ -35,7 +35,7 @@ void DJAudioPlayer::loadURL(URL audioURL) {
         unique_ptr<AudioFormatReaderSource> newSource(new AudioFormatReaderSource(reader,
                                                                                   true));
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
-        readerSource = std::move(newSource);
+        readerSource.reset(newSource.release());
     }
 }
 
