@@ -61,8 +61,8 @@ vector<TrackInfo> TrackStorage::getTracks(const string &nameFilter) {
 
     vector<TrackInfo> result;
 
-    copy_if(tracks.begin(), tracks.end(), back_inserter(result), [&nameFilter](const TrackInfo &trackInfo) {
-        return trackInfo.name.find(nameFilter) != string::npos;
+    copy_if(tracks.begin(), tracks.end(), back_inserter(result), [&nameFilter, this](const TrackInfo &trackInfo) {
+        return to_lower(trackInfo.name).find(to_lower(nameFilter)) != string::npos;
     });
 
     return result;
@@ -119,4 +119,10 @@ void TrackStorage::saveTracks() {
         storageFile << track.name << "\1" << track.filePath << endl;
     }
     storageFile.close();
+}
+
+string TrackStorage::to_lower(string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+    return s;
 }

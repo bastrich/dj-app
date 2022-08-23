@@ -25,4 +25,6 @@ private:
     void readTracks();
 
     void saveTracks();
+
+    string to_lower(string s);
 };
