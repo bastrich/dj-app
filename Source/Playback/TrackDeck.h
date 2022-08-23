@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    TrackDeck.h
-    Created: 13 Mar 2020 6:44:48pm
-    Author:  matthew
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -16,9 +6,6 @@
 
 using std::string;
 
-//==============================================================================
-/*
-*/
 class TrackDeck : public Component,
                   public Button::Listener,
                   public Slider::Listener,

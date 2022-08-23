@@ -1,16 +1,8 @@
-/*
-  ==============================================================================
-
-    DJAudioPlayer.h
-    Created: 13 Mar 2020 4:22:22pm
-    Author:  matthew
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
+
+using std::unique_ptr;
 
 class DJAudioPlayer : public AudioSource {
 public:
@@ -37,7 +29,6 @@ public:
 
     void setReverb(double reverb);
 
-
     void start();
 
     void stop();
@@ -47,12 +38,10 @@ public:
 
 private:
     AudioFormatManager &formatManager;
-    std::unique_ptr<AudioFormatReaderSource> readerSource;
+    unique_ptr<AudioFormatReaderSource> readerSource;
     AudioTransportSource transportSource;
     ResamplingAudioSource resampleSource{&transportSource, false, 2};
     ReverbAudioSource reverbAudioSource{&resampleSource, false};
-
-
 };
 
 

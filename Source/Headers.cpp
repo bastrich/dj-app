@@ -4,16 +4,6 @@
 Headers::Headers() = default;
 
 void Headers::paint(Graphics &g) {
-//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
-
-//    g.setColour(Colours::grey);
-//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
-
-
-
-//
-//    g.setFont(Utils::font);
     g.setColour(Colours::orchid);
     g.setFont(20.0f);
 
@@ -44,8 +34,4 @@ void Headers::paint(Graphics &g) {
             Justification::centred,
             true
     );
-}
-
-void Headers::resized() {
-
 }

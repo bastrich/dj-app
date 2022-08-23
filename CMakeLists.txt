@@ -11,9 +11,9 @@ juce_generate_juce_header(Otodecks)
 
 target_sources(Otodecks
     PRIVATE
-        Source/TrackDeck.cpp
-        Source/DJAudioPlayer.cpp
-        Source/WaveformDisplay.cpp
+        Source/Playback/TrackDeck.cpp
+        Source/Playback/DJAudioPlayer.cpp
+        Source/Playback/WaveformDisplay.cpp
         Source/Library/Library.cpp
         Source/Main.cpp
         Source/Headers.cpp

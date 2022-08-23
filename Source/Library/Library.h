@@ -5,6 +5,8 @@
 #include "TrackStorage.h"
 #include "TrackActions.h"
 
+using std::function;
+
 class Library : public Component,
                 public TableListBoxModel,
                 public Button::Listener,
@@ -12,8 +14,8 @@ class Library : public Component,
 public:
     explicit Library(
             AudioFormatManager &formatManager,
-            const std::function<void(TrackInfo &)> playOnDeck1Impl,
-            const std::function<void(TrackInfo &)> playOnDeck2Impl
+            const function<void(TrackInfo &)> playOnDeck1Impl,
+            const function<void(TrackInfo &)> playOnDeck2Impl
     );
 
     ~Library();
@@ -44,15 +46,15 @@ public:
 
     void buttonClicked(Button *button) override;
 
-    void textEditorTextChanged(TextEditor& textEditor) override;
+    void textEditorTextChanged(TextEditor &textEditor) override;
 
 private:
     AudioFormatManager &formatManager;
     TrackStorage trackStorage{"tracks.csv", formatManager};
     FileChooser fChooser{"Select a file..."};
 
-    const std::function<void(TrackInfo &)> playOnDeck1Impl;
-    const std::function<void(TrackInfo &)> playOnDeck2Impl;
+    const function<void(TrackInfo &)> playOnDeck1Impl;
+    const function<void(TrackInfo &)> playOnDeck2Impl;
 
 
     TextButton addTrackButton{"Add track"};

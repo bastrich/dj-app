@@ -4,6 +4,7 @@
 #include "TrackInfo.h"
 
 using std::string;
+using std::function;
 
 class TrackActions : public Component,
                      public Button::Listener {
@@ -11,9 +12,9 @@ class TrackActions : public Component,
 public:
     explicit TrackActions(
             TrackInfo &trackInfo,
-            const std::function<void(TrackInfo &)> &loadOnDeck1Impl,
-            const std::function<void(TrackInfo &)> &loadOnDeck2Impl,
-            const std::function<void(TrackInfo &)> &deleteTrackImpl
+            const function<void(TrackInfo &)> &loadOnDeck1Impl,
+            const function<void(TrackInfo &)> &loadOnDeck2Impl,
+            const function<void(TrackInfo &)> &deleteTrackImpl
     );
 
     ~TrackActions();
@@ -31,9 +32,9 @@ private:
     TextButton loadOnDeck2Button{"Load on Deck 2"};
     TextButton deleteButton{"Delete"};
 
-    const std::function<void(TrackInfo &)> loadOnDeck1Impl;
-    const std::function<void(TrackInfo &)> loadOnDeck2Impl;
-    const std::function<void(TrackInfo &)> deleteTrackImpl;
+    const function<void(TrackInfo &)> loadOnDeck1Impl;
+    const function<void(TrackInfo &)> loadOnDeck2Impl;
+    const function<void(TrackInfo &)> deleteTrackImpl;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TrackActions)
 };

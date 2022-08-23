@@ -1,6 +1,6 @@
 #include "TrackDeck.h"
-#include "Library/TrackInfo.h"
-#include "Utils.h"
+#include "../Library/TrackInfo.h"
+#include "../Utils.h"
 
 //==============================================================================
 TrackDeck::TrackDeck(DJAudioPlayer *_player,
@@ -11,18 +11,9 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
 
     addAndMakeVisible(trackLabel);
 
-    Utils::setupImageButton(
-            playButton,
-            ImageCache::getFromMemory(BinaryData::play_png, BinaryData::play_pngSize)
-    );
-    Utils::setupImageButton(
-            stopButton,
-            ImageCache::getFromMemory(BinaryData::stop_png, BinaryData::stop_pngSize)
-    );
-    Utils::setupImageButton(
-            loadButton,
-            ImageCache::getFromMemory(BinaryData::load_png, BinaryData::load_pngSize)
-    );
+    Utils::setupImageButton(playButton, BinaryData::play_png, BinaryData::play_pngSize);
+    Utils::setupImageButton(stopButton, BinaryData::stop_png, BinaryData::stop_pngSize);
+    Utils::setupImageButton(loadButton, BinaryData::load_png, BinaryData::load_pngSize);
 
     addAndMakeVisible(waveformDisplay);
     addAndMakeVisible(playButton);
@@ -132,13 +123,12 @@ void TrackDeck::resized() {
 
 void TrackDeck::buttonClicked(Button *button) {
     if (button == &playButton) {
-        std::cout << "Play button was clicked " << std::endl;
+        Logger::writeToLog("Play button was clicked ");
         player->start();
     }
     if (button == &stopButton) {
-        std::cout << "Stop button was clicked " << std::endl;
+        Logger::writeToLog("Stop button was clicked ");
         player->stop();
-
     }
     if (button == &loadButton) {
         auto fileChooserFlags =
@@ -182,7 +172,7 @@ void TrackDeck::sliderValueChanged(Slider *slider) {
 }
 
 bool TrackDeck::isInterestedInFileDrag(const StringArray &files) {
-    std::cout << "TrackDeck::isInterestedInFileDrag" << std::endl;
+    Logger::writeToLog("TrackDeck::isInterestedInFileDrag");
     return true;
 }
 
@@ -203,7 +193,7 @@ void TrackDeck::loadFile(string filePath) {
 }
 
 void TrackDeck::filesDropped(const StringArray &files, int x, int y) {
-    std::cout << "TrackDeck::filesDropped" << std::endl;
+    Logger::writeToLog("TrackDeck::filesDropped");
     if (files.size() == 1) {
         loadFile(files[0].toStdString());
     }

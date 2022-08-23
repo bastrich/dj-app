@@ -2,11 +2,13 @@
 #include "TrackStorage.h"
 #include "TrackInfo.h"
 
+using std::function;
+using std::to_string;
 
 Library::Library(
         AudioFormatManager &formatManager,
-        const std::function<void(TrackInfo &)> playOnDeck1Impl,
-        const std::function<void(TrackInfo &)> playOnDeck2Impl
+        const function<void(TrackInfo &)> playOnDeck1Impl,
+        const function<void(TrackInfo &)> playOnDeck2Impl
 ) : formatManager(formatManager), playOnDeck1Impl(playOnDeck1Impl), playOnDeck2Impl(playOnDeck2Impl) {
 
     addAndMakeVisible(addTrackButton);
@@ -122,7 +124,7 @@ void Library::paintCell(Graphics &g,
                         int width,
                         int height,
                         bool rowIsSelected) {
-    vector<TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
+    vector <TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
     if (rowNumber >= tracks.size()) {
         return;
     }
@@ -142,7 +144,7 @@ void Library::paintCell(Graphics &g,
     if (columnId == 2) {
         Time time{trackInfo.durationSeconds * 1000};
         g.drawText(
-                std::to_string(time.getMinutes()) + " min " + std::to_string(time.getSeconds()) + " sec",
+                to_string(time.getMinutes()) + " min " + to_string(time.getSeconds()) + " sec",
                 2,
                 0,
                 width - 4,
@@ -160,10 +162,6 @@ Component *Library::refreshComponentForCell(
         Component *existingComponentToUpdate) {
     if (columnId == 3) {
         if (existingComponentToUpdate == nullptr) {
-//            TrackInfo trackInfo = trackStorage.getTracks()[rowNumber];
-
-//            std::unique_ptr<TrackActions> trackActions{trackInfo, &loadOnDeck1Impl, &loadOnDeck2Impl, &Library::deleteTrack};
-
             vector<TrackInfo> tracks = trackStorage.getTracks(searchTrackTextEditor.getText().toStdString());
             if (rowNumber >= tracks.size()) {
                 return existingComponentToUpdate;

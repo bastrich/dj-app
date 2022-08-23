@@ -10,11 +10,11 @@ class TrackStorage {
 public:
     TrackStorage(string storageFilePath, AudioFormatManager &formatManager);
 
-    void addTrack(File& file);
+    void addTrack(File &file);
 
     void deleteTrack(string trackFilePath);
 
-    vector<TrackInfo> getTracks(const string& nameFilter);
+    vector<TrackInfo> getTracks(const string &nameFilter);
 
 private:
     AudioFormatManager &formatManager;

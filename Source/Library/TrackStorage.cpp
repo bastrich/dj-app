@@ -3,8 +3,13 @@
 
 using std::exception;
 using std::endl;
-
 using std::vector;
+using std::unique_ptr;
+using std::ifstream;
+using std::getline;
+using std::copy_if;
+using std::back_inserter;
+using std::ofstream;
 
 TrackStorage::TrackStorage(string storageFilePath, AudioFormatManager &formatManager) :
         storageFilePath(storageFilePath),
@@ -15,9 +20,9 @@ TrackStorage::TrackStorage(string storageFilePath, AudioFormatManager &formatMan
     readTracks();
 }
 
-void TrackStorage::addTrack(File& file) {
+void TrackStorage::addTrack(File &file) {
 
-    std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(file));
+    unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(file));
     if (reader) {
         auto durationSeconds = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
         tracks.emplace_back(
@@ -38,9 +43,10 @@ void TrackStorage::addTrack(File& file) {
 }
 
 void TrackStorage::deleteTrack(string trackFilePath) {
-    vector<TrackInfo>::iterator trackInfo = find_if(tracks.begin(), tracks.end(), [&trackFilePath](const TrackInfo &trackInfo) {
-        return trackInfo.filePath.compare(trackFilePath) == 0;
-    });
+    vector<TrackInfo>::iterator trackInfo = find_if(tracks.begin(), tracks.end(),
+                                                    [&trackFilePath](const TrackInfo &trackInfo) {
+                                                        return trackInfo.filePath.compare(trackFilePath) == 0;
+                                                    });
 
     if (trackInfo != tracks.end()) {
         tracks.erase(trackInfo);
@@ -48,15 +54,15 @@ void TrackStorage::deleteTrack(string trackFilePath) {
     }
 }
 
-vector<TrackInfo> TrackStorage::getTracks(const string& nameFilter) {
+vector<TrackInfo> TrackStorage::getTracks(const string &nameFilter) {
     if (nameFilter.empty()) {
         return tracks;
     }
 
     vector<TrackInfo> result;
 
-    std::copy_if (tracks.begin(), tracks.end(), std::back_inserter(result), [&nameFilter](const TrackInfo &trackInfo) {
-        return trackInfo.name.find(nameFilter) != std::string::npos;
+    copy_if(tracks.begin(), tracks.end(), back_inserter(result), [&nameFilter](const TrackInfo &trackInfo) {
+        return trackInfo.name.find(nameFilter) != string::npos;
     });
 
     return result;
@@ -64,7 +70,7 @@ vector<TrackInfo> TrackStorage::getTracks(const string& nameFilter) {
 
 void TrackStorage::readTracks() {
     tracks = vector<TrackInfo>{};
-    std::ifstream storageFile{storageFilePath};
+    ifstream storageFile{storageFilePath};
 
     if (!storageFile.good()) {
         return;
@@ -72,7 +78,7 @@ void TrackStorage::readTracks() {
 
     string line;
     if (storageFile.is_open()) {
-        while (std::getline(storageFile, line)) {
+        while (getline(storageFile, line)) {
             try {
                 if (line.empty()) {
                     continue;
@@ -83,8 +89,8 @@ void TrackStorage::readTracks() {
                 string filePath = line.substr(delimiterPos + 1);
                 int durationSeconds = 0;
 
-                std::ifstream audioFile{filePath};
-                std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(File{filePath}));
+                ifstream audioFile{filePath};
+                unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(File{filePath}));
                 if (reader) {
                     durationSeconds = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
                 } else {
@@ -98,9 +104,9 @@ void TrackStorage::readTracks() {
 
                 tracks.emplace_back(name, filePath, durationSeconds);
             } catch (const exception &e) {
-//                cout << "CSVReader::readCSV bad data" << endl;
+                DBG(e.what());
             }
-        } // end of while
+        }
 
         storageFile.close();
     }
@@ -108,7 +114,7 @@ void TrackStorage::readTracks() {
 }
 
 void TrackStorage::saveTracks() {
-    std::ofstream storageFile{storageFilePath};
+    ofstream storageFile{storageFilePath};
     for (TrackInfo const &track: tracks) {
         storageFile << track.name << "\1" << track.filePath << endl;
     }

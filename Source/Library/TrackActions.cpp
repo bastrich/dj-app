@@ -1,11 +1,12 @@
 #include "TrackActions.h"
 
+using std::function;
 
 TrackActions::TrackActions(
         TrackInfo &trackInfo,
-        const std::function<void(TrackInfo &)> &loadOnDeck1Impl,
-        const std::function<void(TrackInfo &)> &loadOnDeck2Impl,
-        const std::function<void(TrackInfo &)> &deleteTrackImpl
+        const function<void(TrackInfo &)> &loadOnDeck1Impl,
+        const function<void(TrackInfo &)> &loadOnDeck2Impl,
+        const function<void(TrackInfo &)> &deleteTrackImpl
 ) : trackInfo(trackInfo),
     loadOnDeck1Impl(loadOnDeck1Impl),
     loadOnDeck2Impl(loadOnDeck2Impl),

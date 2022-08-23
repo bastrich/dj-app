@@ -1,5 +1,5 @@
 #include "WaveformDisplay.h"
-#include "Utils.h"
+#include "../Utils.h"
 
 //==============================================================================
 WaveformDisplay::WaveformDisplay(AudioFormatManager &formatManagerToUse,
@@ -26,7 +26,7 @@ void WaveformDisplay::paint(Graphics &g) {
 
 //    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
-    g.setColour (Colours::hotpink);
+    g.setColour(Colours::hotpink);
 //    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
 
@@ -39,12 +39,13 @@ void WaveformDisplay::paint(Graphics &g) {
                                0,
                                1.0f
         );
-        g.setColour(Colour{ 0xaf90ee90 });
+        g.setColour(Colour{0xaf90ee90});
         g.fillRect(position * getWidth(), 0, 3, getHeight());
     } else {
         g.setColour(Colours::firebrick);
         g.setFont(16.0f);
-        g.drawText("File not loaded...", getLocalBounds(),Justification::centred, true);   // draw some placeholder text
+        g.drawText("File not loaded...", getLocalBounds(), Justification::centred,
+                   true);   // draw some placeholder text
 
     }
 }
@@ -59,16 +60,16 @@ void WaveformDisplay::loadURL(URL audioURL) {
     audioThumb.clear();
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
     if (fileLoaded) {
-        std::cout << "wfd: loaded! " << std::endl;
+        Logger::writeToLog("wfd: loaded!");
         repaint();
     } else {
-        std::cout << "wfd: not loaded! " << std::endl;
+        Logger::writeToLog("wfd: not loaded!");
     }
 
 }
 
 void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source) {
-    std::cout << "wfd: change received! " << std::endl;
+    Logger::writeToLog("wfd: change received! ");
 
     repaint();
 
