@@ -2,26 +2,20 @@
 
 #include <JuceHeader.h>
 
-//==============================================================================
-/*
-*/
 class WaveformDisplay : public Component,
                         public ChangeListener {
 public:
     WaveformDisplay(AudioFormatManager &formatManagerToUse,
                     AudioThumbnailCache &cacheToUse);
 
-    ~WaveformDisplay();
+    ~WaveformDisplay() override;
 
     void paint(Graphics &) override;
-
-    void resized() override;
 
     void changeListenerCallback(ChangeBroadcaster *source) override;
 
     void loadURL(URL audioURL);
 
-    /** set the relative position of the playhead*/
     void setPositionRelative(double pos);
 
 private:

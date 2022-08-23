@@ -2,19 +2,17 @@
 #include "../Library/TrackInfo.h"
 #include "../Utils.h"
 
-//==============================================================================
 TrackDeck::TrackDeck(DJAudioPlayer *_player,
                      AudioFormatManager &formatManagerToUse,
                      AudioThumbnailCache &cacheToUse
 ) : player(_player),
     waveformDisplay(formatManagerToUse, cacheToUse) {
 
-    addAndMakeVisible(trackLabel);
-
     Utils::setupImageButton(playButton, BinaryData::play_png, BinaryData::play_pngSize);
     Utils::setupImageButton(stopButton, BinaryData::stop_png, BinaryData::stop_pngSize);
     Utils::setupImageButton(loadButton, BinaryData::load_png, BinaryData::load_pngSize);
 
+    addAndMakeVisible(trackLabel);
     addAndMakeVisible(waveformDisplay);
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
@@ -52,7 +50,7 @@ TrackDeck::TrackDeck(DJAudioPlayer *_player,
     reverbSlider.setLookAndFeel(this);
     reverbSlider.setTextBoxStyle(Slider::TextEntryBoxPosition::NoTextBox, true, 0, 0);
 
-    startTimer(500);
+    startTimer(100);
 }
 
 TrackDeck::~TrackDeck() {
@@ -60,11 +58,6 @@ TrackDeck::~TrackDeck() {
 }
 
 void TrackDeck::paint(Graphics &g) {
-//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
-
-//    g.setColour(Colours::grey);
-//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
     g.setColour(Colours::darkorchid);
     g.setFont(14.0f);
 
@@ -110,15 +103,44 @@ void TrackDeck::resized() {
     trackLabel.setBounds(0, 0, getWidth() * 2 / 5, getHeight() / 5);
     waveformDisplay.setBounds(0, getHeight() / 5, getWidth() * 2 / 5, getHeight() * 4 / 5);
     playButton.setBounds(getWidth() * 2 / 5, 0, getHeight() / 5, getHeight() / 5);
-    stopButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 + 10, 0, getHeight() / 5, getHeight() / 5);
-    loadButton.setBounds(getWidth() * 2 / 5 + getHeight() / 5 * 2 + 20, 0, getHeight() / 5, getHeight() / 5);
-    positionSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5, getWidth() * 3 / 10,
-                             getHeight() * 4 / 15);
-    volumeSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15,
-                           getWidth() * 3 / 10, getHeight() * 4 / 15);
-    speedSlider.setBounds(getWidth() * 2 / 5 + getWidth() * 1 / 10, getHeight() / 5 + getHeight() * 4 / 15 * 2,
-                          getWidth() * 3 / 10, getHeight() * 4 / 15);
-    reverbSlider.setBounds(getWidth() * 4 / 5, getHeight() / 5, getWidth() * 1 / 5, getHeight() * 4 / 5);
+    stopButton.setBounds(
+            getWidth() * 2 / 5 + getHeight() / 5 + 10,
+            0,
+            getHeight() / 5,
+            getHeight() / 5
+    );
+    loadButton.setBounds(
+            getWidth() * 2 / 5 + getHeight() / 5 * 2 + 20,
+            0,
+            getHeight() / 5,
+            getHeight() / 5
+    );
+    positionSlider.setBounds(
+            getWidth() * 2 / 5 + getWidth() * 1 / 10,
+            getHeight() / 5,
+            getWidth() * 3 / 10,
+
+            getHeight() * 4 / 15
+    );
+    volumeSlider.setBounds(
+            getWidth() * 2 / 5 + getWidth() * 1 / 10,
+            getHeight() / 5 + getHeight() * 4 / 15,
+
+            getWidth() * 3 / 10,
+            getHeight() * 4 / 15
+    );
+    speedSlider.setBounds(
+            getWidth() * 2 / 5 + getWidth() * 1 / 10,
+            getHeight() / 5 + getHeight() * 4 / 15 * 2,
+            getWidth() * 3 / 10,
+            getHeight() * 4 / 15
+    );
+    reverbSlider.setBounds(
+            getWidth() * 4 / 5,
+            getHeight() / 5,
+            getWidth() * 1 / 5,
+            getHeight() * 4 / 5
+    );
 }
 
 void TrackDeck::buttonClicked(Button *button) {
@@ -131,26 +153,11 @@ void TrackDeck::buttonClicked(Button *button) {
         player->stop();
     }
     if (button == &loadButton) {
-        auto fileChooserFlags =
-                FileBrowserComponent::canSelectFiles;
+        auto fileChooserFlags = FileBrowserComponent::canSelectFiles;
         fChooser.launchAsync(fileChooserFlags, [this](const FileChooser &chooser) {
-            player->loadURL(URL{chooser.getResult()});
-            // and now the waveformDisplay as well
-            waveformDisplay.loadURL(URL{chooser.getResult()});
+            loadFile(chooser.getResult().getFullPathName().toStdString());
         });
     }
-    // if (button == &loadButton)
-    // {
-    //     FileChooser chooser{"Select a file..."};
-    //     if (chooser.browseForFileToOpen())
-    //     {
-    //         player->loadURL(URL{chooser.getResult()});
-    //         waveformDisplay.loadURL(URL{chooser.getResult()});
-
-    //     }
-
-
-    // }
 }
 
 void TrackDeck::sliderValueChanged(Slider *slider) {
@@ -208,13 +215,19 @@ void TrackDeck::timerCallback() {
 }
 
 
-void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPos,
-                                 const float rotaryStartAngle, const float rotaryEndAngle, Slider &) {
-
-
+void TrackDeck::drawRotarySlider(
+        Graphics &g,
+        int x,
+        int y,
+        int width,
+        int height,
+        float sliderPos,
+        const float rotaryStartAngle,
+        const float rotaryEndAngle,
+        Slider &
+) {
     float markSide = 30;
-    float markAddRadius = sqrt(pow(markSide / 2, 2) + pow(markSide / 2, 2));
-
+    auto markAddRadius = static_cast<float>(sqrt(pow(markSide / 2, 2) + pow(markSide / 2, 2)));
     auto radius = (float) juce::jmin(width / 2, height / 2) - markAddRadius;
     auto centreX = (float) x + (float) width * 0.5f;
     auto centreY = (float) y + (float) height * 0.5f;
@@ -222,99 +235,92 @@ void TrackDeck::drawRotarySlider(Graphics &g, int x, int y, int width, int heigh
     auto ry = centreY - radius;
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-
+    float markRadius = radius + markAddRadius;
 
     g.setColour(juce::Colours::orchid);
     g.setFont(16.0f);
 
-    float markRadius = radius + markAddRadius;
-
     g.drawText(
             "0.00",
-            centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2,
-            centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2,
-            markSide,
-            markSide,
+            static_cast<int>(
+                    centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2
+            ),
+            static_cast<int>(
+                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2
+            ),
+            static_cast<int>(markSide),
+            static_cast<int>(markSide),
             Justification::centred
     );
     g.drawText(
             "0.25",
-            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
-            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
-            markSide,
-            markSide,
+            static_cast<int>(
+                    centreX + markRadius * cos(
+                            2.5f * MathConstants<float>::pi -
+                            (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2
+            ),
+            static_cast<int>(
+                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                               (rotaryStartAngle +
+                                                0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2
+            ),
+            static_cast<int>(markSide),
+            static_cast<int>(markSide),
             Justification::centred
     );
     g.drawText(
             "0.50",
-            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.5f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
-            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.5f * (rotaryEndAngle - rotaryStartAngle))),
-            markSide,
-            markSide,
+            static_cast<int>(centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
+                                                        (rotaryStartAngle +
+                                                         0.5f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
+            static_cast<int>(centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                                        (rotaryStartAngle +
+                                                         0.5f * (rotaryEndAngle - rotaryStartAngle)))),
+            static_cast<int>(markSide),
+            static_cast<int>(markSide),
             Justification::centred
     );
     g.drawText(
             "0.75",
-            centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
-            centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                       (rotaryStartAngle + 0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2,
-            markSide,
-            markSide,
+            static_cast<int>(centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
+                                                        (rotaryStartAngle +
+                                                         0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
+            static_cast<int>(centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
+                                                        (rotaryStartAngle +
+                                                         0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
+            static_cast<int>(markSide),
+            static_cast<int>(markSide),
             Justification::centred
     );
     g.drawText(
             "1.00",
-            centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2,
-            centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2,
-            markSide,
-            markSide,
+            static_cast<int>(
+                    centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2
+            ),
+            static_cast<int>(
+                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2
+            ),
+            static_cast<int>(markSide),
+            static_cast<int>(markSide),
             Justification::centred
     );
 
 
-    // fill
-//    g.setColour(juce::Colours::orange);
-//    g.setGradientFill(ColourGradient::horizontal(Colours::lavender, rx, Colours::mediumslateblue, rx+rw));
-//    g.setGradientFill(ColourGradient::vertical(Colours::lavender, ry, Colours::mediumslateblue, ry+rw));
+    g.addTransform(
+            juce::AffineTransform::rotation(angle).translated(centreX, centreY)
+    );
 
-    g.addTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
-//    g.setGradientFill(ColourGradient(
-//            Colours::lavender, centreX + radius * cos(angle), centreY + radius * sin(angle),
-//            Colours::mediumslateblue, centreX + radius * cos(angle), centreY + radius * sin(angle),
-//            true
-//    ));
     g.setGradientFill(ColourGradient(
             Colours::lavender, rx, ry,
             Colours::mediumslateblue, centreX + rw, centreY + rw,
             true
     ));
-//    g.addTransform(AffineTransform::translation(centreX/2, centreY/2));
     g.fillEllipse(-radius, -radius, rw, rw);
 
-
-//    g.addTransform(juce::AffineTransform::translation(-centreX, -centreY));
-
-//    g.addTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
-
-    // outline
-//    g.setColour(juce::Colours::red);
-//    g.drawEllipse(rx, ry, rw, rw, 1.0f);
-
-//    juce::Path p;
     auto pointerLength = radius * 0.5f;
     auto pointerThickness = 10.0f;
     g.setColour(Colours::mediumslateblue);
     g.fillRoundedRectangle(-pointerThickness * 0.5f, -0.85f * radius, pointerThickness, pointerLength, 5);
-//    p.applyTransform(juce::AffineTransform::translation(centreX, centreY));
-
-    // pointer
-//    g.setColour(juce::Colours::darkcyan);
-//    g.fillPath(p);
 }
 
 

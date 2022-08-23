@@ -17,7 +17,7 @@ public:
               AudioFormatManager &formatManagerToUse,
               AudioThumbnailCache &cacheToUse);
 
-    ~TrackDeck();
+    ~TrackDeck() override;
 
     void loadFile(string filePath);
 
@@ -25,10 +25,8 @@ public:
 
     void resized() override;
 
-    /** implement Button::Listener */
     void buttonClicked(Button *) override;
 
-    /** implement Slider::Listener */
     void sliderValueChanged(Slider *slider) override;
 
     bool isInterestedInFileDrag(const StringArray &files) override;
@@ -37,18 +35,28 @@ public:
 
     void timerCallback() override;
 
-    void drawRotarySlider(juce::Graphics &g, int x, int y, int width, int height, float sliderPos,
-                          const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider &) override;
+    void drawRotarySlider(
+            juce::Graphics &g,
+            int x,
+            int y,
+            int width,
+            int height,
+            float sliderPos,
+            float rotaryStartAngle,
+            float rotaryEndAngle,
+            juce::Slider &
+    ) override;
 
 private:
     FileChooser fChooser{"Select a file..."};
+
     DJAudioPlayer *player;
 
-    Label trackLabel{"trackLabel"};
+    Label trackLabel;
     WaveformDisplay waveformDisplay;
-    ImageButton playButton{"Play"};
-    ImageButton stopButton{"Stop"};
-    ImageButton loadButton{"Load"};
+    ImageButton playButton;
+    ImageButton stopButton;
+    ImageButton loadButton;
     Slider positionSlider;
     Slider volumeSlider;
     Slider speedSlider;
