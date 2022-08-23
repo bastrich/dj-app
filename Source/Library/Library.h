@@ -18,7 +18,7 @@ public:
             const function<void(TrackInfo &)> playOnDeck2Impl
     );
 
-    ~Library();
+    ~Library() override;
 
     void paint(Graphics &) override;
 

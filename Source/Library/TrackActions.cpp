@@ -36,16 +36,7 @@ TrackActions::TrackActions(
     deleteButton.setColour(TextButton::ColourIds::textColourOnId, Colours::aliceblue);
 }
 
-TrackActions::~TrackActions() {
-
-}
-
-void TrackActions::paint(Graphics &g) {
-//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
-
-//    g.setColour(Colours::grey);
-//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-}
+TrackActions::~TrackActions() = default;
 
 void TrackActions::resized() {
     loadOnDeck1Button.setBounds(getWidth() / 20, 0, getWidth() / 4, getHeight());

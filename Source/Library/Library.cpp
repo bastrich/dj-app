@@ -66,19 +66,11 @@ Library::Library(
     searchTrackTextEditor.setJustification(Justification::centredLeft);
 }
 
-Library::~Library() {
-
-}
+Library::~Library() = default;
 
 void Library::paint(Graphics &g) {
-//    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
-
-//    g.setColour(Colours::grey);
-//    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
     g.setColour(Colours::orchid);
     g.setFont(20.0f);
-
     g.drawText(
             "Music Library",
             0,
@@ -110,7 +102,6 @@ void Library::paintRowBackground(Graphics &g,
                                  int width,
                                  int height,
                                  bool rowIsSelected) {
-// just highlight selected rows
     if (rowIsSelected) {
         g.fillAll(Colour{0x9fff1493});
     } else {

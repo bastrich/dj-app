@@ -62,5 +62,16 @@ private:
     Slider speedSlider;
     Slider reverbSlider;
 
+    static void drawMark(
+            Graphics &g,
+            const float centreX,
+            const float centreY,
+            const float markRadius,
+            const int markSide,
+            const float rotaryStartAngle,
+            const float rotaryEndAngle,
+            const float piece
+    );
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TrackDeck)
 };

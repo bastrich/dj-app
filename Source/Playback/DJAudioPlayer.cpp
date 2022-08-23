@@ -1,15 +1,14 @@
 #include "DJAudioPlayer.h"
 
+#include <utility>
+
 using std::unique_ptr;
 
 DJAudioPlayer::DJAudioPlayer(AudioFormatManager &_formatManager)
         : formatManager(_formatManager) {
-
 }
 
-DJAudioPlayer::~DJAudioPlayer() {
-
-}
+DJAudioPlayer::~DJAudioPlayer() = default;
 
 void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     reverbAudioSource.setBypassed(true);
@@ -31,12 +30,12 @@ void DJAudioPlayer::releaseResources() {
 
 void DJAudioPlayer::loadURL(URL audioURL) {
     auto *reader = formatManager.createReaderFor(audioURL.createInputStream(false));
-    if (reader != nullptr) // good file!
+    if (reader != nullptr)
     {
         unique_ptr<AudioFormatReaderSource> newSource(new AudioFormatReaderSource(reader,
                                                                                   true));
         transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
-        readerSource.reset(newSource.release());
+        readerSource = std::move(newSource);
     }
 }
 
@@ -71,7 +70,6 @@ void DJAudioPlayer::setPositionRelative(double pos) {
 }
 
 void DJAudioPlayer::setReverb(double reverb) {
-
     if (reverb > 0) {
         reverbAudioSource.setBypassed(false);
     } else {
@@ -80,8 +78,8 @@ void DJAudioPlayer::setReverb(double reverb) {
     }
 
     Reverb::Parameters parameters = reverbAudioSource.getParameters();
-    parameters.wetLevel = reverb;
-    parameters.dryLevel = 1 - reverb;
+    parameters.wetLevel = static_cast<float>(reverb);
+    parameters.dryLevel = static_cast<float>(1 - reverb);
     reverbAudioSource.setParameters(parameters);
 }
 

@@ -7,9 +7,9 @@ using std::unique_ptr;
 class DJAudioPlayer : public AudioSource {
 public:
 
-    DJAudioPlayer(AudioFormatManager &_formatManager);
+    explicit DJAudioPlayer(AudioFormatManager &_formatManager);
 
-    ~DJAudioPlayer();
+    ~DJAudioPlayer() override;
 
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 
@@ -33,7 +33,6 @@ public:
 
     void stop();
 
-    /** get the relative position of the playhead */
     double getPositionRelative();
 
 private:

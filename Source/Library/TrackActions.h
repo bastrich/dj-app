@@ -17,9 +17,7 @@ public:
             const function<void(TrackInfo &)> &deleteTrackImpl
     );
 
-    ~TrackActions();
-
-    void paint(Graphics &) override;
+    ~TrackActions() override;
 
     void resized() override;
 

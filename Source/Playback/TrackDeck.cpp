@@ -2,6 +2,11 @@
 #include "../Library/TrackInfo.h"
 #include "../Utils.h"
 
+using std::stringstream;
+using std::string;
+using std::setprecision;
+using std::fixed;
+
 TrackDeck::TrackDeck(DJAudioPlayer *_player,
                      AudioFormatManager &formatManagerToUse,
                      AudioThumbnailCache &cacheToUse
@@ -226,7 +231,8 @@ void TrackDeck::drawRotarySlider(
         const float rotaryEndAngle,
         Slider &
 ) {
-    float markSide = 30;
+    //init required calculation variables
+    int markSide = 30;
     auto markAddRadius = static_cast<float>(sqrt(pow(markSide / 2, 2) + pow(markSide / 2, 2)));
     auto radius = (float) juce::jmin(width / 2, height / 2) - markAddRadius;
     auto centreX = (float) x + (float) width * 0.5f;
@@ -237,75 +243,16 @@ void TrackDeck::drawRotarySlider(
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     float markRadius = radius + markAddRadius;
 
+    //draw knob marks
     g.setColour(juce::Colours::orchid);
     g.setFont(16.0f);
+    drawMark(g,centreX,centreY, markRadius, markSide, rotaryStartAngle, rotaryEndAngle, 0);
+    drawMark(g,centreX,centreY, markRadius, markSide, rotaryStartAngle, rotaryEndAngle, 0.25);
+    drawMark(g,centreX,centreY, markRadius, markSide, rotaryStartAngle, rotaryEndAngle, 0.5);
+    drawMark(g,centreX,centreY, markRadius, markSide, rotaryStartAngle, rotaryEndAngle, 0.75);
+    drawMark(g,centreX,centreY, markRadius, markSide, rotaryStartAngle, rotaryEndAngle, 1);
 
-    g.drawText(
-            "0.00",
-            static_cast<int>(
-                    centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2
-            ),
-            static_cast<int>(
-                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryStartAngle) - markSide / 2
-            ),
-            static_cast<int>(markSide),
-            static_cast<int>(markSide),
-            Justification::centred
-    );
-    g.drawText(
-            "0.25",
-            static_cast<int>(
-                    centreX + markRadius * cos(
-                            2.5f * MathConstants<float>::pi -
-                            (rotaryStartAngle + 0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2
-            ),
-            static_cast<int>(
-                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                               (rotaryStartAngle +
-                                                0.25f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2
-            ),
-            static_cast<int>(markSide),
-            static_cast<int>(markSide),
-            Justification::centred
-    );
-    g.drawText(
-            "0.50",
-            static_cast<int>(centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
-                                                        (rotaryStartAngle +
-                                                         0.5f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
-            static_cast<int>(centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                                        (rotaryStartAngle +
-                                                         0.5f * (rotaryEndAngle - rotaryStartAngle)))),
-            static_cast<int>(markSide),
-            static_cast<int>(markSide),
-            Justification::centred
-    );
-    g.drawText(
-            "0.75",
-            static_cast<int>(centreX + markRadius * cos(2.5f * MathConstants<float>::pi -
-                                                        (rotaryStartAngle +
-                                                         0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
-            static_cast<int>(centreY - markRadius * sin(2.5f * MathConstants<float>::pi -
-                                                        (rotaryStartAngle +
-                                                         0.75f * (rotaryEndAngle - rotaryStartAngle))) - markSide / 2),
-            static_cast<int>(markSide),
-            static_cast<int>(markSide),
-            Justification::centred
-    );
-    g.drawText(
-            "1.00",
-            static_cast<int>(
-                    centreX + markRadius * cos(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2
-            ),
-            static_cast<int>(
-                    centreY - markRadius * sin(2.5f * MathConstants<float>::pi - rotaryEndAngle) - markSide / 2
-            ),
-            static_cast<int>(markSide),
-            static_cast<int>(markSide),
-            Justification::centred
-    );
-
-
+    //draw knob
     g.addTransform(
             juce::AffineTransform::rotation(angle).translated(centreX, centreY)
     );
@@ -321,6 +268,30 @@ void TrackDeck::drawRotarySlider(
     auto pointerThickness = 10.0f;
     g.setColour(Colours::mediumslateblue);
     g.fillRoundedRectangle(-pointerThickness * 0.5f, -0.85f * radius, pointerThickness, pointerLength, 5);
+}
+
+void TrackDeck::drawMark(
+        Graphics &g,
+        const float centreX,
+        const float centreY,
+        const float markRadius,
+        const int markSide,
+        const float rotaryStartAngle,
+        const float rotaryEndAngle,
+        const float piece
+) {
+    float angle = 2.5f * MathConstants<float>::pi - (rotaryStartAngle + piece * (rotaryEndAngle - rotaryStartAngle));
+    stringstream stream;
+    stream << fixed << setprecision(2) << piece;
+    string pieceString = stream.str();
+    g.drawText(
+            pieceString,
+            static_cast<int>(centreX + markRadius * cos(angle) - static_cast<float>(markSide) / 2),
+            static_cast<int>(centreY - markRadius * sin(angle) - (piece == 0.5 ? 0 : static_cast<float>(markSide) / 2)),
+            markSide,
+            markSide,
+            Justification::centred
+    );
 }
 
 

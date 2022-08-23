@@ -30,6 +30,7 @@ void WaveformDisplay::paint(Graphics &g) {
 
     }
 }
+
 void WaveformDisplay::loadURL(URL audioURL) {
     audioThumb.clear();
     fileLoaded = audioThumb.setSource(new URLInputSource(audioURL));
@@ -44,9 +45,7 @@ void WaveformDisplay::loadURL(URL audioURL) {
 
 void WaveformDisplay::changeListenerCallback(ChangeBroadcaster *source) {
     Logger::writeToLog("wfd: change received! ");
-
     repaint();
-
 }
 
 void WaveformDisplay::setPositionRelative(double pos) {
@@ -54,8 +53,6 @@ void WaveformDisplay::setPositionRelative(double pos) {
         position = pos;
         repaint();
     }
-
-
 }
 
 
