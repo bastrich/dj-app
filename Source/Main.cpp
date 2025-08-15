@@ -7,10 +7,10 @@ using std::unique_ptr;
 using std::make_unique;
 using std::exception;
 
-class OtoDecksApplication : public JUCEApplication {
+class DjAppApplication : public JUCEApplication {
 public:
 
-    OtoDecksApplication() = default;
+    DjAppApplication() = default;
 
     const String getApplicationName() override { return JUCE_APPLICATION_NAME_STRING; }
 
@@ -108,4 +108,4 @@ private:
     unique_ptr<MainWindow> mainWindow;
 };
 
-START_JUCE_APPLICATION (OtoDecksApplication)
+START_JUCE_APPLICATION (DjAppApplication)

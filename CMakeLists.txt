@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(OTODECKS VERSION 1.0.0)
+project(DJAPP VERSION 1.0.0)
 
 add_subdirectory(JUCE)
 
-juce_add_gui_app(Otodecks
-    PRODUCT_NAME "Otodecks")
+juce_add_gui_app(DjApp
+    PRODUCT_NAME "DjApp")
 
-juce_generate_juce_header(Otodecks)
+juce_generate_juce_header(DjApp)
 
-target_sources(Otodecks
+target_sources(DjApp
     PRIVATE
         Source/Playback/TrackDeck.cpp
         Source/Playback/DJAudioPlayer.cpp
@@ -23,10 +23,10 @@ target_sources(Otodecks
         Source/Utils.h
         Source/MainComponent.cpp)
 
-target_compile_definitions(Otodecks
+target_compile_definitions(DjApp
     PRIVATE
-        JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:Otodecks,JUCE_PRODUCT_NAME>"
-        JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:Otodecks,JUCE_VERSION>")
+        JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:DjApp,JUCE_PRODUCT_NAME>"
+        JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:DjApp,JUCE_VERSION>")
 
 juce_add_binary_data(BinaryData
     SOURCES
@@ -39,7 +39,7 @@ juce_add_binary_data(BinaryData
         Resources/Images/maximize.png
         Resources/Fonts/StoryElement.ttf)
 
-target_link_libraries(Otodecks
+target_link_libraries(DjApp
     PRIVATE
         BinaryData
         juce::juce_gui_extra
